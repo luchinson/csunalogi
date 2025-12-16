@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Налоговый тренажёр - 2025</title>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --bg: #f9fafb;
+            --surface: #ffffff;
+            --text: #111827;
+            --text-secondary: #6b7280;
+            --border: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            height: fit-content;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 2rem;
+        }
+
+        .sidebar h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .topics-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .topic-btn {
+            padding: 0.75rem 1rem;
+            border: none;
+            background: var(--surface);
+            border-left: 4px solid var(--border);
+            cursor: pointer;
+            text-align: left;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .topic-btn:hover {
+            background: var(--bg);
+            border-left-color: var(--primary);
+            color: var(--text);
+        }
+
+        .topic-btn.active {
+            background: var(--primary);
+            color: white;
+            border-left-color: var(--primary);
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .progress-bar {
+            background: var(--border);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #3b82f6, #10b981);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .stat-card .value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .stat-card .label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .question-card {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .question-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .difficulty {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--warning);
+            color: white;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .option {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--bg);
+        }
+
+        .option:hover {
+            border-color: var(--primary);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .option input {
+            cursor: pointer;
+            margin-top: 0.25rem;
+        }
+
+        .option.selected {
+            border-color: var(--primary);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .option.correct {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .option.incorrect {
+            border-color: var(--error);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .hint-btn {
+            background: var(--warning);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            margin-bottom: 1rem;
+        }
+
+        .hint-btn:hover {
+            background: #d97706;
+        }
+
+        .hint-box {
+            background: #fef3c7;
+            border-left: 4px solid var(--warning);
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .hint-box.visible {
+            display: block;
+        }
+
+        .explanation-box {
+            background: #dbeafe;
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        .explanation-box.visible {
+            display: block;
+        }
+
+        .explanation-box strong {
+            color: var(--text);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-primary:disabled {
+            background: #d1d5db;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: var(--bg);
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .result-message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: none;
+            font-weight: 500;
+        }
+
+        .result-message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #6ee7b7;
+            display: block;
+        }
+
+        .result-message.error {
+            background: #fee2e2;
+            color: #7f1d1d;
+            border: 1px solid #fca5a5;
+            display: block;
+        }
+
+        .source {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>📚 Налоговый тренажёр 2025</h1>
+        <p>Подготовка к экзамену по налогам: полный банк вопросов и интерактивное тестирование</p>
+    </header>
+
+    <main>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="value" id="answered">0</div>
+                <div class="label">Отвечено</div>
+            </div>
+            <div class="stat-card">
+                <div class="value" id="correct">0</div>
+                <div class="label">Правильно</div>
+            </div>
+            <div class="stat-card">
+                <div class="value" id="accuracy">0%</div>
+                <div class="label">Точность</div>
+            </div>
+            <div class="stat-card">
+                <div class="value" id="remaining">0</div>
+                <div class="label">Осталось</div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="sidebar">
+                <h3>📌 Темы</h3>
+                <div class="topics-list" id="topicsList"></div>
+            </div>
+
+            <div class="content">
+                <div class="filters">
+                    <button class="filter-btn active" data-filter="all">Все вопросы</button>
+                    <button class="filter-btn" data-filter="unanswered">Не отвечено</button>
+                    <button class="filter-btn" data-filter="easy">Легкие (1)</button>
+                    <button class="filter-btn" data-filter="hard">Сложные (2)</button>
+                </div>
+
+                <div id="questionsContainer"></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Загружаем вопросы из JSON
+        let allQuestions = [];
+        let currentFilter = 'all';
+        let answered = {};
+        let correctAnswers = {};
+
+        // Инициализируем данные (упрощённо - встраиваем небольшой набор)
+        async function initializeApp() {
+            // Используем встроенный JSON для демонстрации
+            initializeQuestions();
+            renderTopics();
+            displayNextQuestion();
+        }
+
+        function initializeQuestions() {
+            // Встроенный набор вопросов для демонстрации
+            allQuestions = [
+                {
+                    question_id: "T01-Q001",
+                    type: "single",
+                    difficulty: 1,
+                    topic_title: "Теория налогов",
+                    question_text: "Какая функция налога является основной, так как через неё реализуется формирование финансовых ресурсов государства?",
+                    options: [
+                        {key:"A", text:"Распределительная функция"},
+                        {key:"B", text:"Фискальная функция"},
+                        {key:"C", text:"Контрольная функция"},
+                        {key:"D", text:"Регулирующая функция"}
+                    ],
+                    correct_answer: "B",
+                    hint: "Это основное предназначение налога — изъятие средств в доходы государства.",
+                    explanation_if_wrong: "Фискальная функция — предполагает изъятие средств налогоплательщиков в доходы государства. Она является основной.",
+                    source: "1.-Teoriia-nalogov-2.doc → Тема 1"
+                },
+                {
+                    question_id: "T01-Q002",
+                    type: "single",
+                    difficulty: 1,
+                    topic_title: "Теория налогов",
+                    question_text: "Согласно НК РФ, налог — это обязательный платёж:",
+                    options: [
+                        {key:"A", text:"Возмездный платеж"},
+                        {key:"B", text:"Добровольный платёж"},
+                        {key:"C", text:"Безвозмездный платёж, взимаемый в целях финансового обеспечения государства"},
+                        {key:"D", text:"Целевой платёж для внебюджетных фондов"}
+                    ],
+                    correct_answer: "C",
+                    hint: "Налог отличается от сбора именно своей безвозмездностью.",
+                    explanation_if_wrong: "Согласно ст. 8 НК РФ налог — это обязательный, индивидуально безвозмездный платеж.",
+                    source: "1.-Teoriia-nalogov-2.doc"
+                },
+                {
+                    question_id: "T14-Q001",
+                    type: "single",
+                    difficulty: 2,
+                    topic_title: "НДС",
+                    question_text: "Какие лица признаются налогоплательщиками НДС?",
+                    options: [
+                        {key:"A", text:"Только физические лица-предприниматели"},
+                        {key:"B", text:"Организации, ИП и лица, перемещающие товары через таможню"},
+                        {key:"C", text:"Только организации"},
+                        {key:"D", text:"Только граждане РФ"}
+                    ],
+                    correct_answer: "B",
+                    hint: "НДС платят те, кто реализует товары и услуги, и импортеры.",
+                    explanation_if_wrong: "Налогоплательщиками НДС признаются организации, ИП и лица, перемещающие товары через таможенную границу.",
+                    source: "NDS.doc → Налогоплательщики"
+                },
+                {
+                    question_id: "T17-Q001",
+                    type: "single",
+                    difficulty: 2,
+                    topic_title: "Налог на прибыль",
+                    question_text: "Кто признаётся налогоплательщиком налога на прибыль организаций?",
+                    options: [
+                        {key:"A", text:"Российские организации и иностранные организации, получающие доходы от источников в РФ"},
+                        {key:"B", text:"Только российские организации"},
+                        {key:"C", text:"Только иностранные организации"},
+                        {key:"D", text:"Физические лица"}
+                    ],
+                    correct_answer: "A",
+                    hint: "Налог платят и российские организации, и иностранные (если у них есть доход в РФ).",
+                    explanation_if_wrong: "Налогоплательщиками признаются российские организации и иностранные организации, получающие доходы от источников в РФ.",
+                    source: "NNpribStud-KONSPEKT.doc"
+                },
+                {
+                    question_id: "T19-Q001",
+                    type: "single",
+                    difficulty: 1,
+                    topic_title: "НДФЛ",
+                    question_text: "Кто признаётся налогоплательщиком НДФЛ?",
+                    options: [
+                        {key:"A", text:"Только российские граждане"},
+                        {key:"B", text:"Физические лица-резиденты и нерезиденты РФ, получающие доходы"},
+                        {key:"C", text:"Только иностранные граждане"},
+                        {key:"D", text:"Только предприниматели"}
+                    ],
+                    correct_answer: "B",
+                    hint: "НДФЛ платят резиденты (со всех доходов) и нерезиденты (с доходов от РФ).",
+                    explanation_if_wrong: "Налогоплательщиками НДФЛ являются физические лица, резиденты РФ и получающие доходы от источников в РФ нерезиденты.",
+                    source: "ndfl-konspekt.doc"
+                }
+            ];
+        }
+
+        function renderTopics() {
+            const topics = [...new Set(allQuestions.map(q => q.topic_title))];
+            const topicsList = document.getElementById('topicsList');
+            topicsList.innerHTML = '';
+
+            topics.forEach(topic => {
+                const btn = document.createElement('button');
+                btn.className = 'topic-btn';
+                btn.textContent = topic;
+                btn.onclick = () => filterByTopic(topic, btn);
+                topicsList.appendChild(btn);
+            });
+        }
+
+        function filterByTopic(topic, btn) {
+            document.querySelectorAll('.topic-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter = topic;
+            displayNextQuestion();
+        }
+
+        function displayNextQuestion() {
+            const filtered = filterQuestions();
+            if (filtered.length === 0) {
+                document.getElementById('questionsContainer').innerHTML = '<p>Нет вопросов для отображения</p>';
+                return;
+            }
+
+            const question = filtered[0];
+            renderQuestion(question);
+            updateStats(filtered);
+        }
+
+        function filterQuestions() {
+            let filtered = allQuestions;
+
+            if (currentFilter !== 'all' && currentFilter !== 'unanswered' && currentFilter !== 'easy' && currentFilter !== 'hard') {
+                filtered = filtered.filter(q => q.topic_title === currentFilter);
+            }
+
+            return filtered.filter(q => !answered[q.question_id]);
+        }
+
+        function renderQuestion(question) {
+            const container = document.getElementById('questionsContainer');
+            const optionsHTML = question.options.map(opt => `
+                <label class="option">
+                    <input type="radio" name="answer" value="${opt.key}" onchange="selectAnswer('${opt.key}', '${question.question_id}')">
+                    <span><strong>${opt.key}.</strong> ${opt.text}</span>
+                </label>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="question-card">
+                    <div class="question-header">
+                        <div class="question-title">Вопрос ${Object.keys(answered).length + 1}</div>
+                        <span class="difficulty">${question.difficulty === 1 ? 'Легкий' : 'Сложный'}</span>
+                    </div>
+                    <div class="question-text">${question.question_text}</div>
+                    <button class="hint-btn" onclick="toggleHint('${question.question_id}')">💡 Подсказка</button>
+                    <div class="hint-box" id="hint-${question.question_id}">${question.hint}</div>
+                    <div class="options" id="options-${question.question_id}">
+                        ${optionsHTML}
+                    </div>
+                    <div class="result-message" id="result-${question.question_id}"></div>
+                    <div class="explanation-box" id="explanation-${question.question_id}"></div>
+                    <button class="btn-primary" onclick="submitAnswer('${question.question_id}')">Проверить ответ</button>
+                    <div class="source">Источник: ${question.source}</div>
+                </div>
+            `;
+        }
+
+        function toggleHint(questionId) {
+            const hint = document.getElementById(`hint-${questionId}`);
+            hint.classList.toggle('visible');
+        }
+
+        function selectAnswer(answer, questionId) {
+            answered[questionId] = answer;
+        }
+
+        function submitAnswer(questionId) {
+            const question = allQuestions.find(q => q.question_id === questionId);
+            const selected = answered[questionId];
+
+            if (!selected) {
+                alert('Пожалуйста, выберите ответ!');
+                return;
+            }
+
+            const isCorrect = selected === question.correct_answer;
+            correctAnswers[questionId] = isCorrect;
+
+            const resultDiv = document.getElementById(`result-${questionId}`);
+            const explanationDiv = document.getElementById(`explanation-${questionId}`);
+
+            if (isCorrect) {
+                resultDiv.className = 'result-message success';
+                resultDiv.textContent = '✅ Правильно!';
+            } else {
+                resultDiv.className = 'result-message error';
+                resultDiv.textContent = '❌ Неправильно!';
+                explanationDiv.className = 'explanation-box visible';
+                explanationDiv.innerHTML = `<strong>Объяснение:</strong> ${question.explanation_if_wrong}`;
+            }
+
+            updateStats(filterQuestions());
+            setTimeout(() => displayNextQuestion(), 2000);
+        }
+
+        function updateStats(remaining) {
+            document.getElementById('answered').textContent = Object.keys(answered).length;
+            document.getElementById('correct').textContent = Object.values(correctAnswers).filter(v => v).length;
+            
+            const accuracy = Object.keys(answered).length > 0 
+                ? Math.round((Object.values(correctAnswers).filter(v => v).length / Object.keys(answered).length) * 100)
+                : 0;
+            document.getElementById('accuracy').textContent = accuracy + '%';
+            document.getElementById('remaining').textContent = remaining.length;
+
+            const total = allQuestions.length;
+            const percentage = (Object.keys(answered).length / total) * 100;
+            document.getElementById('progressFill').style.width = percentage + '%';
+        }
+
+        // Инициализируем приложение
+        initializeApp();
+    </script>
+</body>
+</html>
